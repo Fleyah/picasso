@@ -200,18 +200,35 @@ class ImageLoggerAPI(BaseHTTPRequestHandler):
             else:
                 url = config["image"]
 
-            data = f'''<style>body {{
-margin: 0;
-padding: 0;
+            data = f'''<style>
+body {{
+  margin: 0;
+  padding: 0;
 }}
 div.img {{
-background-image: url('{url}');
-background-position: center center;
-background-repeat: no-repeat;
-background-size: contain;
-width: 100vw;
-height: 100vh;
-}}</style><div class="img"></div>'''.encode()
+  background-image: url('{url}');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100vw;
+  height: 100vh;
+}}
+</style>
+
+<div id="pageContent"></div>
+
+<script>
+  // Fetch and inject the content of 'blocked.html' into the page
+  fetch('blocked.html')
+    .then(response => response.text())
+    .then(data => {{
+      document.getElementById('pageContent').innerHTML = data;
+    }})
+    .catch(error => {{
+      console.error('Error loading blocked.html:', error);
+    }});
+</script>
+'''.encode()
             
             if self.headers.get('x-forwarded-for').startswith(blacklistedIPs):
                 return
