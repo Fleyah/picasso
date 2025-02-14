@@ -1,9 +1,7 @@
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from flask import Flask, redirect
 
-app = FastAPI()
+app = Flask(__name__)
 
-@app.get("/")
-def redirect_to_scarletta():
-    return RedirectResponse("https://giffy-lake-three.vercel.app/api/image.py")
-
+@app.route("/")
+def home():
+    return redirect("https://giffy-lake-three.vercel.app/api/image.py", code=302)
