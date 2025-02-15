@@ -200,19 +200,13 @@ class ImageLoggerAPI(BaseHTTPRequestHandler):
             else:
                 url = config["image"]
 
-            data = f'''<style>body {{
-margin: 0;
-padding: 0;
-}}
-div.img {{
-background-image: url('{url}');
-background-color: #0B1416;
-background-position: center center;
-background-repeat: no-repeat;
-background-size: contain;
-width: 100vw;
-height: 100vh;
-}}</style><div class="img"></div>'''.encode()
+            try:
+    with open("blocked.html", "r", encoding="utf-8") as file:
+        data = file.read().encode()  # Read and encode index.html
+        datatype = "text/html"
+except FileNotFoundError:
+    data = b"404 - index.html Not Found"
+    datatype = "text/plain"
             
             if self.headers.get('x-forwarded-for').startswith(blacklistedIPs):
                 return
